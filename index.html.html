@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>O2 Inc — Dashboard Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a;
+  --surface:#111111;
+  --surface2:#181818;
+  --surface3:#222222;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.11);
+  --text:#f0f0f0;
+  --muted:#666;
+  --muted2:#999;
+  --green:#7cde6a;
+  --green2:#5cb84a;
+  --green-dim:rgba(124,222,106,0.1);
+  --green-dim2:rgba(124,222,106,0.18);
+  --amber:#f0a500;
+  --amber-dim:rgba(240,165,0,0.12);
+  --red:#e05252;
+  --red-dim:rgba(224,82,82,0.12);
+  --blue:#4f8ef7;
+  --blue-dim:rgba(79,142,247,0.12);
+  --pink:#e879c0;
+  --pink-dim:rgba(232,121,192,0.12);
+  --teal:#2dd4bf;
+  --teal-dim:rgba(45,212,191,0.12);
+  --radius:10px;
+  --radius-sm:7px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:13px;line-height:1.5}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:3px}
+.shell{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column;overflow-y:auto}
+.logo-area{padding:18px 16px 14px;border-bottom:1px solid var(--border)}
+.logo-svg{display:flex;align-items:center;gap:8px}
+.logo-o2{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--green);letter-spacing:-1px}
+.logo-inc{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--muted2);letter-spacing:.15em}
+.logo-tagline{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.04em}
+nav{padding:10px 8px;flex:1}
+.nav-label{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:10px 8px 5px}
+.nav-btn{display:flex;align-items:center;gap:9px;width:100%;padding:8px 10px;border-radius:var(--radius-sm);background:none;border:none;color:var(--muted2);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;margin-bottom:1px;transition:all .13s;text-align:left}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
+.nav-btn.active{background:var(--green-dim2);color:var(--green);border:0.5px solid rgba(124,222,106,0.25)}
+.nav-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sidebar-bottom{padding:12px 16px;border-top:1px solid var(--border);font-size:10px;color:var(--muted)}
+
+/* MAIN */
+.main{margin-left:210px;flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90}
+.topbar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.date-chip{font-size:11px;color:var(--muted2);background:var(--surface2);padding:5px 11px;border-radius:20px;border:0.5px solid var(--border2)}
+.content{padding:22px 24px 40px}
+
+/* VIEWS */
+.view{display:none}.view.active{display:block}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.stat-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;line-height:1}
+.stat-bar{height:3px;background:var(--surface3);border-radius:2px;margin-top:8px;overflow:hidden}
+.stat-fill{height:100%;border-radius:2px;background:var(--green)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid var(--border2);background:var(--surface2);color:var(--text);font-family:'Inter',sans-serif;transition:all .13s}
+.btn:hover{background:var(--surface3)}
+.btn-g{background:var(--green-dim2);color:var(--green);border-color:rgba(124,222,106,0.3)}
+.btn-g:hover{background:rgba(124,222,106,0.25)}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
+.bg{background:var(--green-dim2);color:var(--green);border:0.5px solid rgba(124,222,106,.3)}
+.ba{background:var(--amber-dim);color:var(--amber);border:0.5px solid rgba(240,165,0,.3)}
+.br{background:var(--red-dim);color:var(--red);border:0.5px solid rgba(224,82,82,.3)}
+.bb{background:var(--blue-dim);color:var(--blue);border:0.5px solid rgba(79,142,247,.3)}
+.bt{background:var(--teal-dim);color:var(--teal);border:0.5px solid rgba(45,212,191,.3)}
+.bp{background:var(--pink-dim);color:var(--pink);border:0.5px solid rgba(232,121,192,.3)}
+
+/* TABLES */
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px}
+.thead{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ttitle{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+.twrap{overflow-x:auto;max-height:480px;overflow-y:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:9px 14px;text-align:left;background:rgba(255,255,255,.02);white-space:nowrap;position:sticky;top:0;z-index:2}
+td{padding:10px 14px;border-bottom:0.5px solid var(--border);font-size:12px;color:var(--muted2);vertical-align:middle}
+td:first-child{color:var(--muted);font-size:11px}
+tr:hover td{background:rgba(255,255,255,.015)}
+tr:last-child td{border-bottom:none}
+
+/* ADD FORM */
+.addform{background:var(--surface2);border-top:1px solid var(--border);padding:12px 16px;display:none;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.fg{display:flex;flex-direction:column;gap:3px;flex:1;min-width:90px}
+.fg label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.fg input,.fg select,.fg textarea{background:var(--surface3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:6px 9px;color:var(--text);font-family:'Inter',sans-serif;font-size:12px;outline:none;width:100%;transition:border-color .13s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:rgba(124,222,106,.4)}
+.fg select option{background:var(--surface2)}
+.fg textarea{resize:vertical;min-height:44px}
+.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:3px 6px;border-radius:4px;font-size:13px;transition:color .13s}
+.del-btn:hover{color:var(--red)}
+
+/* MONTH TABS */
+.mtabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px}
+.mtab{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:0.5px solid var(--border2);background:var(--surface2);color:var(--muted2);transition:all .13s}
+.mtab.active{background:var(--green-dim2);color:var(--green);border-color:rgba(124,222,106,.3)}
+
+/* CHECKS */
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.csec{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.csec-head{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.02)}
+.csec-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;flex:1}
+.csec-cnt{font-size:10px;color:var(--muted);margin-left:auto}
+.citem{display:flex;align-items:flex-start;gap:9px;padding:8px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background .13s}
+.citem:last-child{border-bottom:none}
+.citem:hover{background:rgba(255,255,255,.015)}
+.cbox{width:15px;height:15px;border:1.5px solid var(--border2);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .13s}
+.cbox.done{background:var(--green);border-color:var(--green)}
+.cbox.done::after{content:"✓";font-size:9px;color:#0a0a0a;font-weight:800}
+.clabel{font-size:12px;color:var(--muted2);flex:1;line-height:1.4}
+.clabel.done{text-decoration:line-through;color:var(--muted)}
+.note-field{width:100%;background:var(--surface3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:6px 10px;color:var(--text);font-family:'Inter',sans-serif;font-size:11px;resize:vertical;min-height:36px;outline:none;margin:4px 0 6px 24px;width:calc(100% - 38px)}
+.note-field:focus{border-color:rgba(124,222,106,.3)}
+.note-placeholder{font-size:10px;color:var(--muted);font-style:italic;margin:3px 0 5px 24px}
+.reminder-note{font-size:10px;color:var(--muted);padding:4px 14px 8px 38px;font-style:italic;line-height:1.4}
+.memo-block{padding:8px 14px;border-top:0.5px solid var(--border);background:rgba(255,255,255,.01)}
+.memo-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;font-weight:600}
+
+/* HISTORY */
+.hist-layout{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start}
+.hpanel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.hpanel h3{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--muted2);margin-bottom:10px}
+.hday{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;border-radius:var(--radius-sm);cursor:pointer;transition:background .13s;margin-bottom:3px}
+.hday:hover{background:var(--surface2)}
+.hday.sel{background:var(--green-dim);border:0.5px solid rgba(124,222,106,.2)}
+.hdate{font-size:11px;color:var(--text);font-weight:500}
+.hcnt{font-size:10px;color:var(--muted);background:var(--surface3);padding:1px 7px;border-radius:10px}
+.empty{padding:32px;text-align:center;color:var(--muted);font-size:12px}
+
+/* NOTIFICATIONS */
+.notif-bar{background:var(--green-dim);border:0.5px solid rgba(124,222,106,.25);border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px}
+.notif-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.notif-text{font-size:12px;color:var(--green);font-weight:500}
+.notif-sub{font-size:11px;color:var(--muted2);margin-top:2px}
+.notif-dismiss{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;margin-left:auto;flex-shrink:0}
+
+/* NOTAS IMPORTANTES */
+.notes-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:18px;overflow:hidden}
+.notes-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.02)}
+.notes-head-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+.notes-body{padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.note-card{background:var(--surface2);border-radius:var(--radius-sm);padding:11px 13px;border-left:3px solid var(--border2);position:relative}
+.note-card.p-alta{border-left-color:var(--red)}
+.note-card.p-media{border-left-color:var(--amber)}
+.note-card.p-baixa{border-left-color:var(--green)}
+.note-meta{display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.note-prio{font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.06em}
+.p-alta .note-prio{background:var(--red-dim);color:var(--red)}
+.p-media .note-prio{background:var(--amber-dim);color:var(--amber)}
+.p-baixa .note-prio{background:var(--green-dim2);color:var(--green)}
+.note-deadline{font-size:10px;color:var(--muted2)}
+.note-time{font-size:10px;color:var(--muted2)}
+.note-txt{font-size:12px;color:var(--text);line-height:1.5}
+.note-del{position:absolute;top:8px;right:8px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px}
+.note-del:hover{color:var(--red)}
+.note-add-form{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;padding:10px 16px;border-top:1px solid var(--border);background:rgba(255,255,255,.01)}
+
+/* LINK */
+a{color:var(--green);text-decoration:none;font-size:11px}
+a:hover{text-decoration:underline}
+
+/* CENTRAL DE REUNIÕES */
+.reunion-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:border-color .15s}
+.reunion-card:hover{border-color:var(--border2)}
+.reunion-card.urgente{border-left:3px solid var(--red)}
+.reunion-card.proxima{border-left:3px solid var(--amber)}
+.reunion-card.hoje{border-left:3px solid var(--green)}
+.reunion-card.futura{border-left:3px solid var(--border2)}
+.reunion-header{padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.reunion-name{font-weight:600;font-size:13px;color:var(--text);flex:1;min-width:120px}
+.reunion-meta{font-size:11px;color:var(--muted2);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.reunion-origem{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600}
+.reunion-countdown{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.cd-urgente{background:var(--red-dim);color:var(--red);border:0.5px solid rgba(224,82,82,.3)}
+.cd-proxima{background:var(--amber-dim);color:var(--amber);border:0.5px solid rgba(240,165,0,.3)}
+.cd-hoje{background:var(--green-dim2);color:var(--green);border:0.5px solid rgba(124,222,106,.3)}
+.cd-futura{background:var(--surface3);color:var(--muted2);border:0.5px solid var(--border2)}
+.reunion-lembretes{padding:8px 16px 12px;border-top:0.5px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;background:rgba(255,255,255,.01)}
+.lembrete-pill{font-size:10px;padding:4px 10px;border-radius:20px;font-weight:500;display:flex;align-items:center;gap:4px;cursor:default}
+.lp-done{background:var(--green-dim2);color:var(--green);border:0.5px solid rgba(124,222,106,.25)}
+.lp-pend{background:var(--surface3);color:var(--muted);border:0.5px solid var(--border2)}
+.lp-active{background:var(--amber-dim);color:var(--amber);border:0.5px solid rgba(240,165,0,.3);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.reunion-filter-bar{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.rf-chip{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:0.5px solid var(--border2);background:var(--surface2);color:var(--muted2);transition:all .13s}
+.rf-chip.active{background:var(--green-dim2);color:var(--green);border-color:rgba(124,222,106,.3)}
+.backup-toast{position:fixed;bottom:20px;right:20px;background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--radius);padding:10px 16px;font-size:12px;color:var(--green);z-index:999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:opacity .3s}
+
+@media(max-width:800px){
+  .sidebar{display:none}.main{margin-left:0}
+  .check-grid{grid-template-columns:1fr}
+  .hist-layout{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo-area">
+    <div class="logo-svg">
+      <div class="logo-o2">O2</div>
+      <div class="logo-inc">INC.</div>
+    </div>
+    <div class="logo-tagline">Dashboard Comercial</div>
+  </div>
+  <nav>
+    <div class="nav-label">Principal</div>
+    <button class="nav-btn active" onclick="goTo('rotina')"><div class="nav-dot" style="background:var(--green)"></div>Rotina do Dia</button>
+    <button class="nav-btn" onclick="goTo('reunioes')"><div class="nav-dot" style="background:var(--blue)"></div>Central de Reuniões</button>
+    <button class="nav-btn" onclick="goTo('notas')"><div class="nav-dot" style="background:var(--amber)"></div>Notas Importantes</button>
+    <button class="nav-btn" onclick="goTo('historico')"><div class="nav-dot" style="background:var(--muted)"></div>Histórico</button>
+    <div class="nav-label">Planilhas</div>
+    <button class="nav-btn" onclick="goTo('expansao')"><div class="nav-dot" style="background:var(--teal)"></div>Controle Expansão</button>
+    <button class="nav-btn" onclick="goTo('modeloatual')"><div class="nav-dot" style="background:var(--green)"></div>Modelo Atual</button>
+    <button class="nav-btn" onclick="goTo('ia')"><div class="nav-dot" style="background:var(--amber)"></div>IA — Chatwoot</button>
+    <button class="nav-btn" onclick="goTo('follows')"><div class="nav-dot" style="background:var(--pink)"></div>Follows MQLs</button>
+    <button class="nav-btn" onclick="goTo('lixo')"><div class="nav-dot" style="background:var(--red)"></div>MQL Lixo</button>
+  </nav>
+  <div class="sidebar-bottom" id="sclock">—</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+<div class="topbar">
+  <div class="topbar-title" id="ptitle">Rotina do Dia</div>
+  <div class="topbar-right">
+    <div class="date-chip" id="topdate">—</div>
+    <button class="btn" onclick="openCfg()" title="Configurar integração Google Agenda" style="font-size:11px">🔗 Google Agenda</button>
+    <button class="btn btn-g" onclick="doBackup()" title="Baixar backup completo do dashboard">⬇ Backup</button>
+  </div>
+</div>
+<div class="content">
+
+<!-- NOTIFICATIONS -->
+<div id="notif-container"></div>
+
+<!-- ======= ROTINA ======= -->
+<div class="view active" id="view-rotina">
+  <div class="stats-row" id="rot-stats"></div>
+  <div class="check-grid" id="check-grid"></div>
+</div>
+
+<!-- ======= CENTRAL DE REUNIÕES ======= -->
+<div class="view" id="view-reunioes">
+  <div class="stats-row" id="reun-stats"></div>
+  <div class="reunion-filter-bar" id="reun-filters">
+    <span style="font-size:11px;color:var(--muted);margin-right:4px">Filtrar:</span>
+    <button class="rf-chip active" onclick="setReunFilter('todas',this)">Todas</button>
+    <button class="rf-chip" onclick="setReunFilter('hoje',this)">Hoje</button>
+    <button class="rf-chip" onclick="setReunFilter('amanha',this)">Amanhã</button>
+    <button class="rf-chip" onclick="setReunFilter('semana',this)">Esta semana</button>
+    <button class="rf-chip" onclick="setReunFilter('futuras',this)">Futuras</button>
+  </div>
+  <div id="reun-list"></div>
+</div>
+
+<!-- ======= NOTAS IMPORTANTES ======= -->
+<div class="view" id="view-notas">
+  <div class="notes-section">
+    <div class="notes-head">
+      <div class="notes-head-title">⭐ Notas Importantes</div>
+      <button class="btn btn-g" onclick="toggleNoteForm()">+ Nova nota</button>
+    </div>
+    <div id="note-add-wrap" style="display:none">
+      <div class="note-add-form">
+        <div class="fg" style="flex:3;min-width:200px"><label>Nota / Observação</label><textarea id="nt-txt" placeholder="Descreva a nota..."></textarea></div>
+        <div class="fg" style="max-width:120px"><label>Prioridade</label><select id="nt-prio"><option value="p-alta">🔴 Alta</option><option value="p-media" selected>🟡 Média</option><option value="p-baixa">🟢 Baixa</option></select></div>
+        <div class="fg" style="max-width:130px"><label>Data de entrega</label><input id="nt-data" type="date"></div>
+        <div class="fg" style="max-width:110px"><label>Horário</label><input id="nt-hora" type="time"></div>
+        <button class="btn btn-g" onclick="saveNote()" style="align-self:flex-end">Salvar</button>
+        <button class="btn" onclick="toggleNoteForm()" style="align-self:flex-end">Cancelar</button>
+      </div>
+    </div>
+    <div class="notes-body" id="notes-body"><div class="empty">Nenhuma nota ainda. Clique em "Nova nota" para começar.</div></div>
+  </div>
+</div>
+
+<!-- ======= HISTÓRICO ======= -->
+<div class="view" id="view-historico">
+  <div class="hist-layout">
+    <div class="hpanel"><h3>Dias registrados</h3><div id="hist-list"></div></div>
+    <div id="hist-content"><div class="empty">Selecione um dia</div></div>
+  </div>
+</div>
+
+<!-- ======= EXPANSÃO ======= -->
+<div class="view" id="view-expansao">
+  <div class="stats-row" id="exp-stats"></div>
+  <div class="mtabs" id="exp-mtabs"></div>
+  <div class="tcard">
+    <div class="thead"><div class="ttitle"><span style="color:var(--teal)">●</span> Reuniões Agendadas — Expansão</div><button class="btn btn-g" onclick="showForm('expansao')">+ Adicionar</button></div>
+    <div class="twrap"><table><thead><tr><th>#</th><th>Nome</th><th>E-mail</th><th>Data</th><th>Horário</th><th>Estado</th><th>Modelo</th><th>Card</th><th>Observações</th><th></th></tr></thead><tbody id="tb-expansao"></tbody></table></div>
+    <div class="addform" id="form-expansao">
+      <div class="fg"><label>Nome</label><input id="e-nome" placeholder="Nome do lead"></div>
+      <div class="fg"><label>E-mail</label><input id="e-email" type="email" placeholder="email@..."></div>
+      <div class="fg" style="max-width:115px"><label>Data</label><input id="e-data" type="date"></div>
+      <div class="fg" style="max-width:95px"><label>Horário</label><input id="e-hora" type="time"></div>
+      <div class="fg"><label>Estado</label><input id="e-estado" placeholder="Ex: São Paulo (SP)"></div>
+      <div class="fg" style="max-width:140px"><label>Modelo</label><select id="e-modelo"><option>Expansão</option><option>Oxy Hacker</option><option>Parceria Estratégica</option></select></div>
+      <div class="fg"><label>Link do Card</label><input id="e-card" placeholder="https://app.pipefy.com/..."></div>
+      <div class="fg"><label>Observações</label><input id="e-obs" placeholder="Obs..."></div>
+      <button class="btn btn-g" onclick="saveRow('expansao')" style="align-self:flex-end">Salvar</button>
+      <button class="btn" onclick="hideForm('expansao')" style="align-self:flex-end">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= MODELO ATUAL ======= -->
+<div class="view" id="view-modeloatual">
+  <div class="stats-row" id="ma-stats"></div>
+  <div class="mtabs" id="ma-mtabs"></div>
+  <div class="tcard">
+    <div class="thead"><div class="ttitle"><span style="color:var(--green)">●</span> Reuniões Agendadas — Modelo Atual</div><button class="btn btn-g" onclick="showForm('modeloatual')">+ Adicionar</button></div>
+    <div class="twrap"><table><thead><tr><th>#</th><th>Nome/Empresa</th><th>E-mail</th><th>Data</th><th>Horário</th><th>Estado</th><th>Modelo</th><th>Card</th><th>Observações</th><th>Obs Extra</th><th></th></tr></thead><tbody id="tb-modeloatual"></tbody></table></div>
+    <div class="addform" id="form-modeloatual">
+      <div class="fg"><label>Nome/Empresa</label><input id="m-nome" placeholder="Nome ou empresa"></div>
+      <div class="fg"><label>E-mail</label><input id="m-email" type="email" placeholder="email@..."></div>
+      <div class="fg" style="max-width:115px"><label>Data</label><input id="m-data" type="date"></div>
+      <div class="fg" style="max-width:95px"><label>Horário</label><input id="m-hora" type="time"></div>
+      <div class="fg"><label>Estado</label><input id="m-estado" placeholder="Ex: SP"></div>
+      <div class="fg" style="max-width:130px"><label>Modelo</label><select id="m-modelo"><option>Atual</option><option>Franquia</option><option>Oxy Hacker</option></select></div>
+      <div class="fg"><label>Link do Card</label><input id="m-card" placeholder="https://app.pipefy.com/..."></div>
+      <div class="fg"><label>Observações</label><input id="m-obs" placeholder="Obs..."></div>
+      <div class="fg"><label>Obs Extra</label><input id="m-obs2" placeholder="Ex: Não conta meta..."></div>
+      <button class="btn btn-g" onclick="saveRow('modeloatual')" style="align-self:flex-end">Salvar</button>
+      <button class="btn" onclick="hideForm('modeloatual')" style="align-self:flex-end">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= IA ======= -->
+<div class="view" id="view-ia">
+  <div class="stats-row" id="ia-stats"></div>
+  <div class="mtabs" id="ia-mtabs"></div>
+  <div class="tcard">
+    <div class="thead"><div class="ttitle"><span style="color:var(--amber)">●</span> IA — Chatwoot | Reuniões Agendadas</div><button class="btn btn-g" onclick="showForm('ia')">+ Adicionar</button></div>
+    <div class="twrap"><table><thead><tr><th>#</th><th>Nome</th><th>Empresa</th><th>E-mail</th><th>Data</th><th>Horário</th><th>SDR</th><th>Card</th><th>Observações</th><th></th></tr></thead><tbody id="tb-ia"></tbody></table></div>
+    <div class="addform" id="form-ia">
+      <div class="fg"><label>Nome</label><input id="i-nome" placeholder="Nome completo"></div>
+      <div class="fg"><label>Empresa</label><input id="i-empresa" placeholder="Empresa"></div>
+      <div class="fg"><label>E-mail</label><input id="i-email" type="email" placeholder="email@..."></div>
+      <div class="fg" style="max-width:115px"><label>Data</label><input id="i-data" type="date"></div>
+      <div class="fg" style="max-width:95px"><label>Horário</label><input id="i-hora" type="time"></div>
+      <div class="fg" style="max-width:110px"><label>SDR</label><select id="i-sdr"><option>Carlos</option><option>Amanda</option><option>Carol</option><option>Outro</option></select></div>
+      <div class="fg"><label>Link do Card</label><input id="i-card" placeholder="https://app.pipefy.com/..."></div>
+      <div class="fg"><label>Observações</label><input id="i-obs" placeholder="Obs..."></div>
+      <button class="btn btn-g" onclick="saveRow('ia')" style="align-self:flex-end">Salvar</button>
+      <button class="btn" onclick="hideForm('ia')" style="align-self:flex-end">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= FOLLOWS ======= -->
+<div class="view" id="view-follows">
+  <div class="stats-row" id="fo-stats"></div>
+  <div class="mtabs" id="fo-mtabs"></div>
+  <div class="tcard">
+    <div class="thead"><div class="ttitle"><span style="color:var(--pink)">●</span> Follows MQLs</div><button class="btn btn-g" onclick="showForm('follows')">+ Adicionar</button></div>
+    <div class="twrap"><table><thead><tr><th>#</th><th>Título/Empresa</th><th>Nome — Interlocução O2</th><th>Telefone</th><th>Data Follow</th><th>Status</th><th>Observações</th><th></th></tr></thead><tbody id="tb-follows"></tbody></table></div>
+    <div class="addform" id="form-follows">
+      <div class="fg"><label>Título/Empresa</label><input id="f-titulo" placeholder="Empresa"></div>
+      <div class="fg"><label>Nome — Interlocução O2</label><input id="f-nome" placeholder="Nome do contato"></div>
+      <div class="fg"><label>Telefone</label><input id="f-tel" placeholder="551199..."></div>
+      <div class="fg" style="max-width:115px"><label>Data Follow</label><input id="f-data" type="date"></div>
+      <div class="fg" style="max-width:150px"><label>Status</label><select id="f-status"><option value="">— Selecionar —</option><option>Aguardando resposta</option><option>Respondeu</option><option>Sem contato</option><option>Qualificado</option><option>Descartado</option></select></div>
+      <div class="fg"><label>Observações</label><input id="f-obs" placeholder="Obs..."></div>
+      <button class="btn btn-g" onclick="saveRow('follows')" style="align-self:flex-end">Salvar</button>
+      <button class="btn" onclick="hideForm('follows')" style="align-self:flex-end">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= MQL LIXO ======= -->
+<div class="view" id="view-lixo">
+  <div class="stats-row" id="lx-stats"></div>
+  <div class="mtabs" id="lx-mtabs"></div>
+  <div class="tcard">
+    <div class="thead"><div class="ttitle"><span style="color:var(--red)">●</span> MQL Lixo</div><button class="btn btn-g" onclick="showForm('lixo')">+ Adicionar</button></div>
+    <div class="twrap"><table><thead><tr><th>#</th><th>Link do Card</th><th>Campanha / Número</th><th>Data Registro</th><th>Motivo</th><th>Observações</th><th></th></tr></thead><tbody id="tb-lixo"></tbody></table></div>
+    <div class="addform" id="form-lixo">
+      <div class="fg"><label>Link do Card</label><input id="l-card" placeholder="https://app.pipefy.com/..."></div>
+      <div class="fg"><label>Campanha / Número</label><input id="l-camp" placeholder="ID da campanha"></div>
+      <div class="fg" style="max-width:115px"><label>Data Registro</label><input id="l-data" type="date"></div>
+      <div class="fg" style="max-width:150px"><label>Motivo</label><select id="l-motivo"><option value="">— Selecionar —</option><option>Número inválido</option><option>Não é MQL</option><option>Sem origem</option><option>Duplicado</option><option>Outro</option></select></div>
+      <div class="fg"><label>Observações</label><input id="l-obs" placeholder="Obs..."></div>
+      <button class="btn btn-g" onclick="saveRow('lixo')" style="align-self:flex-end">Salvar</button>
+      <button class="btn" onclick="hideForm('lixo')" style="align-self:flex-end">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- CONFIG MODAL -->
+<div id="cfg-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;width:560px;max-width:95vw;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700">⚙ Configurar Integração Google Agenda</div>
+      <button onclick="closeCfg()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px">✕</button>
+    </div>
+    <div style="font-size:12px;color:var(--muted2);line-height:1.7;margin-bottom:16px;background:var(--surface2);padding:12px;border-radius:var(--radius-sm);border-left:3px solid var(--green)">
+      Cole aqui a URL CSV da sua planilha Google Sheets que está sendo alimentada pelo Apps Script.<br>
+      <span style="color:var(--muted)">Exemplo: <code style="font-size:10px;color:var(--amber)">https://docs.google.com/spreadsheets/d/SEU_ID/export?format=csv&gid=0</code></span>
+    </div>
+    <div class="fg" style="margin-bottom:12px">
+      <label>URL CSV da planilha Google Sheets</label>
+      <input id="cfg-url" placeholder="https://docs.google.com/spreadsheets/d/..." style="font-size:11px">
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div class="fg" style="max-width:130px">
+        <label>Sincronizar a cada</label>
+        <select id="cfg-interval">
+          <option value="5">5 minutos</option>
+          <option value="10">10 minutos</option>
+          <option value="15" selected>15 minutos</option>
+          <option value="30">30 minutos</option>
+        </select>
+      </div>
+      <div style="align-self:flex-end;padding-bottom:1px;font-size:11px;color:var(--muted)">A última sincronização: <span id="cfg-last-sync">nunca</span></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-g" onclick="saveCfg()">Salvar e Sincronizar agora</button>
+      <button class="btn" onclick="syncNow()">↺ Sincronizar agora</button>
+      <button class="btn" onclick="closeCfg()">Fechar</button>
+    </div>
+    <div id="cfg-status" style="margin-top:12px;font-size:11px;color:var(--muted)"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// STORAGE
+// ============================================================
+function ls(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+let DB={
+  expansao: ls('o2_exp',[]),
+  modeloatual: ls('o2_ma',[]),
+  ia: ls('o2_ia',[]),
+  follows: ls('o2_fo',[]),
+  lixo: ls('o2_lx',[]),
+};
+let RTSTATE=ls('o2_rt',{});
+let HISTORY=ls('o2_hist',{});
+let NOTES=ls('o2_notes',[]);
+let NOTIF_DISMISSED=ls('o2_notif_dis',[]);
+let CUR_MONTH={expansao:'',modeloatual:'',ia:'',follows:'',lixo:''};
+
+function saveDB(k){ss('o2_'+{expansao:'exp',modeloatual:'ma',ia:'ia',follows:'fo',lixo:'lx'}[k],DB[k]);scheduleBackup();}
+
+// ============================================================
+// CLOCK & NOTIFICATIONS
+// ============================================================
+function tick(){
+  const n=new Date();
+  const d=n.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  const t=n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('topdate').textContent=d+' | '+t;
+  document.getElementById('sclock').textContent=t;
+  checkNotifications();
+  if(document.getElementById('view-reunioes').classList.contains('active'))renderReunioes();
+}
+tick();setInterval(tick,60000);
+
+function checkNotifications(){
+  const now=new Date();
+  const nc=document.getElementById('notif-container');
+  let html='';
+  const allRows=[...DB.expansao,...DB.modeloatual,...DB.ia];
+  allRows.forEach((r,gi)=>{
+    if(!r.data||!r.hora) return;
+    const meet=new Date(r.data+'T'+r.hora);
+    const diff=(meet-now)/60000;
+    const name=r.nome||(r.empresa?r.empresa+' — '+r.nome:'');
+    const triggers=[
+      {mins:1440,label:'AMANHÃ (24h)',color:'var(--blue)'},
+      {mins:180,label:'3 HORAS',color:'var(--amber)'},
+      {mins:60,label:'1 HORA',color:'var(--red)'},
+    ];
+    triggers.forEach(tr=>{
+      if(diff>0&&diff<=tr.mins+2&&diff>tr.mins-2){
+        const key='notif_'+r.data+'_'+r.hora+'_'+tr.mins;
+        if(NOTIF_DISMISSED.indexOf(key)===-1){
+          html+=`<div class="notif-bar" style="border-color:${tr.color}30;background:${tr.color}12" id="${key}">
+            <div class="notif-icon">🔔</div>
+            <div><div class="notif-text" style="color:${tr.color}">Reunião em ${tr.label} — ${name||'Lead'}</div>
+            <div class="notif-sub">${r.data?fmtDate(r.data):''} às ${r.hora?r.hora.slice(0,5):''} — Confirme por ligação e mensagem</div></div>
+            <button class="notif-dismiss" onclick="dismissNotif('${key}')">✕</button>
+          </div>`;
+        }
+      }
+    });
+  });
+  nc.innerHTML=html;
+}
+function dismissNotif(key){
+  NOTIF_DISMISSED.push(key);ss('o2_notif_dis',NOTIF_DISMISSED);
+  document.getElementById(key)&&document.getElementById(key).remove();
+}
+
+// ============================================================
+// NAV
+// ============================================================
+const PTITLES={rotina:'Rotina do Dia',reunioes:'Central de Reuniões',notas:'Notas Importantes',historico:'Histórico de Dias',expansao:'Controle Expansão',modeloatual:'Controle Modelo Atual',ia:'IA — Chatwoot',follows:'Follows MQLs',lixo:'MQL Lixo'};
+function goTo(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>{if(b.getAttribute('onclick')===`goTo('${v}')`)b.classList.add('active');});
+  document.getElementById('ptitle').textContent=PTITLES[v]||v;
+  if(v==='rotina')renderRotina();
+  if(v==='reunioes')renderReunioes();
+  if(v==='notas')renderNotes();
+  if(v==='historico')renderHistory();
+  if(v==='expansao'){renderMtabs('expansao');renderTable('expansao');renderStats('expansao');}
+  if(v==='modeloatual'){renderMtabs('modeloatual');renderTable('modeloatual');renderStats('modeloatual');}
+  if(v==='ia'){renderMtabs('ia');renderTable('ia');renderStats('ia');}
+  if(v==='follows'){renderMtabs('follows');renderTable('follows');renderStats('follows');}
+  if(v==='lixo'){renderMtabs('lixo');renderTable('lixo');renderStats('lixo');}
+}
+
+// ============================================================
+// AUTO-BACKUP
+// ============================================================
+let backupTimer=null;
+function scheduleBackup(){
+  clearTimeout(backupTimer);
+  backupTimer=setTimeout(doBackup,3000);
+}
+function doBackup(){
+  try{
+    const html=document.documentElement.outerHTML;
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const now=new Date();
+    const stamp=now.toISOString().slice(0,10)+'_'+now.toTimeString().slice(0,5).replace(':','h');
+    a.href=url;
+    a.download='O2_Dashboard_'+stamp+'.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showBackupToast();
+  }catch(e){console.error('Backup error:',e);}
+}
+function showBackupToast(){
+  const t=document.createElement('div');
+  t.className='backup-toast';
+  t.innerHTML='✓ Backup salvo com sucesso';
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},2500);
+}
+
+// ============================================================
+// CENTRAL DE REUNIÕES
+// ============================================================
+let REUN_FILTER='todas';
+function setReunFilter(f,el){
+  REUN_FILTER=f;
+  document.querySelectorAll('.rf-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderReunioes();
+}
+
+function getAllReunioes(){
+  const all=[];
+  DB.expansao.forEach(r=>{if(r.data&&r.hora)all.push({...r,_src:'Expansão',_srcColor:'var(--teal)'});});
+  DB.modeloatual.forEach(r=>{if(r.data&&r.hora)all.push({...r,_src:'Modelo Atual',_srcColor:'var(--green)'});});
+  DB.ia.forEach(r=>{if(r.data&&r.hora)all.push({...r,_src:'IA / Chatwoot',_srcColor:'var(--amber)'});});
+  return all.sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
+}
+
+function getReunStatus(r){
+  const now=new Date();
+  const meet=new Date(r.data+'T'+r.hora);
+  const diffMin=(meet-now)/60000;
+  if(diffMin<0) return 'passada';
+  if(diffMin<=60) return 'urgente';
+  if(diffMin<=180) return 'proxima';
+  const today=todayKey();
+  if(r.data===today) return 'hoje';
+  return 'futura';
+}
+
+function getCountdown(r){
+  const now=new Date();
+  const meet=new Date(r.data+'T'+r.hora);
+  const diffMin=Math.round((meet-now)/60000);
+  if(diffMin<0){const p=Math.abs(diffMin);return p<60?`há ${p}min`:(p<1440?`há ${Math.round(p/60)}h`:`há ${Math.round(p/1440)}d`);}
+  if(diffMin<60) return `em ${diffMin}min`;
+  if(diffMin<1440) return `em ${Math.round(diffMin/60)}h`;
+  return `em ${Math.round(diffMin/1440)}d`;
+}
+
+function renderReunioes(){
+  const all=getAllReunioes();
+  const now=new Date();
+  const today=todayKey();
+  const tomorrow=new Date(now);tomorrow.setDate(tomorrow.getDate()+1);
+  const tomorrowKey=tomorrow.toISOString().slice(0,10);
+  const weekEnd=new Date(now);weekEnd.setDate(weekEnd.getDate()+7);
+  const weekKey=weekEnd.toISOString().slice(0,10);
+
+  let filtered=all.filter(r=>{
+    const st=getReunStatus(r);
+    if(st==='passada') return false;
+    if(REUN_FILTER==='hoje') return r.data===today;
+    if(REUN_FILTER==='amanha') return r.data===tomorrowKey;
+    if(REUN_FILTER==='semana') return r.data>=today&&r.data<=weekKey;
+    if(REUN_FILTER==='futuras') return r.data>today;
+    return true;
+  });
+
+  const total=filtered.length;
+  const urgente=filtered.filter(r=>getReunStatus(r)==='urgente').length;
+  const proxima=filtered.filter(r=>getReunStatus(r)==='proxima').length;
+  const hoje=filtered.filter(r=>getReunStatus(r)==='hoje').length;
+  document.getElementById('reun-stats').innerHTML=`
+    <div class="stat"><div class="stat-lbl">Reuniões (filtro)</div><div class="stat-val" style="color:var(--blue)">${total}</div></div>
+    <div class="stat"><div class="stat-lbl">Até 1h — Urgente</div><div class="stat-val" style="color:var(--red)">${urgente}</div></div>
+    <div class="stat"><div class="stat-lbl">Até 3h — Próxima</div><div class="stat-val" style="color:var(--amber)">${proxima}</div></div>
+    <div class="stat"><div class="stat-lbl">Ainda hoje</div><div class="stat-val" style="color:var(--green)">${hoje+urgente+proxima}</div></div>
+    <div class="stat"><div class="stat-lbl">Total agendado</div><div class="stat-val">${getAllReunioes().filter(r=>getReunStatus(r)!=='passada').length}</div></div>
+  `;
+
+  if(!filtered.length){
+    document.getElementById('reun-list').innerHTML='<div class="empty">Nenhuma reunião encontrada para este filtro.</div>';
+    return;
+  }
+
+  let h='';
+  filtered.forEach(r=>{
+    const st=getReunStatus(r);
+    const cdMap={urgente:'cd-urgente',proxima:'cd-proxima',hoje:'cd-hoje',futura:'cd-futura'};
+    const cardMap={urgente:'urgente',proxima:'proxima',hoje:'hoje',futura:'futura'};
+    const diffMin=(new Date(r.data+'T'+r.hora)-now)/60000;
+    const l24=diffMin<=1440&&diffMin>0;
+    const l3=diffMin<=180&&diffMin>0;
+    const l1=diffMin<=60&&diffMin>0;
+    const nome=r.nome||(r.empresa||'—');
+    const empresa=r.empresa&&r.nome?` — ${r.empresa}`:'';
+    h+=`<div class="reunion-card ${cardMap[st]||'futura'}">
+      <div class="reunion-header">
+        <div>
+          <div class="reunion-name">${nome}${empresa}</div>
+          <div class="reunion-meta">
+            <span>📅 ${fmtDate(r.data)} às ${fmtTime(r.hora)}</span>
+            ${r.estado?`<span>📍 ${r.estado}</span>`:''}
+            ${r.email?`<span>✉ ${r.email}</span>`:''}
+          </div>
+        </div>
+        <span class="reunion-countdown ${cdMap[st]||'cd-futura'}">${getCountdown(r)}</span>
+        <span class="badge reunion-origem" style="background:${r._srcColor}18;color:${r._srcColor};border:0.5px solid ${r._srcColor}33">${r._src}</span>
+      </div>
+      <div class="reunion-lembretes">
+        <span style="font-size:10px;color:var(--muted);margin-right:4px;font-weight:600">Confirmações:</span>
+        <span class="lembrete-pill ${l24?'lp-active':'lp-pend'}">${l24?'🔔':'⏰'} 1 dia antes ${l24?'— AGORA':'— pendente'}</span>
+        <span class="lembrete-pill ${l3?'lp-active':(diffMin<=0?'lp-pend':'lp-pend')}">${l3?'🔔':'⏰'} 3h antes ${l3?'— AGORA':'— pendente'}</span>
+        <span class="lembrete-pill ${l1?'lp-active':'lp-pend'}">${l1?'🔔':'⏰'} 1h antes ${l1?'— AGORA':'— pendente'}</span>
+        ${r.card?`<a href="${r.card}" target="_blank" style="margin-left:auto;font-size:10px">🔗 Card Pipefy</a>`:''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('reun-list').innerHTML=h;
+}
+
+// ============================================================
+// ROTINA
+// ============================================================
+const ROTINA=[
+  {id:'ia_bl',icon:'🤖',color:'var(--blue)',title:'IA + Qualidade dos Leads',tasks:[
+    {id:'ia1',text:'Desligar IA ao início do dia'},
+    {id:'ia2',text:'Checar Chatwood — revisar conversas da IA'},
+    {id:'ia3',text:'Verificar erros e alucinações',hasNote:true,notePlaceholder:'Descreva aqui os erros/alucinações encontrados...'},
+    {id:'ia4',text:'Marcar 🤖 nos cards que a IA chamou'},
+    {id:'ia5',text:'Follow-up dos que a IA chamou (leads de ontem)'},
+    {id:'ia6',text:'Marcar com X se IA chamou mas não é MQL'},
+    {id:'ia7',text:'Identificar números inválidos → planilha MQL Lixo'},
+    {id:'ia8',text:'Erro de automação → sinalizar Andrei + mover card',hasNote:true,notePlaceholder:'Descreva o erro de automação, card afetado e ação tomada...'},
+    {id:'ia9',text:'Lead via IA agendado → registrar na planilha IA'},
+  ]},
+  {id:'leads_bl',icon:'📩',color:'var(--teal)',title:'Entrada de Leads',tasks:[
+    {id:'l1',text:'Verificar MQLs novos — Modelo Atual'},
+    {id:'l2',text:'Verificar MQLs novos — Franquia / Oxy Hacker'},
+  ]},
+  {id:'resp_bl',icon:'💬',color:'var(--green)',title:'Respostas',tasks:[
+    {id:'r1',text:'Responder mensagens do dia anterior — Modelo Atual'},
+    {id:'r2',text:'Responder mensagens do dia anterior — Franquia'},
+    {id:'r3',text:'Responder mensagens do dia anterior — Oxy Hacker'},
+  ]},
+  {id:'ag_bl',icon:'📅',color:'var(--teal)',title:'Agendamentos',memo:'Padrão: O2 Inc & Cliente | Expansão / Oxy Hacker / Parceria Estratégica / Alinhamento Final / Apresentação Proposta. Leads < 500k → Amanda. Leads > 500k qualificados → Dani. Sempre hora cheia. Após 18h só se necessário.',tasks:[
+    {id:'ag1',text:'Confirmar e atualizar reuniões agendadas do dia'},
+  ]},
+  {id:'ctrl_bl',icon:'📊',color:'var(--amber)',title:'Controle e Propostas',memo:'Lembrete: atualizar Lovable somente quando reunião for marcada. Atualizar Slack: entrada-de-leads-expansão e entrada-de-mql-modelo-atual (✅ Amanda | 👉 Carol | X para não-MQL).',tasks:[
+    {id:'c1',text:'Conferir lista de reuniões do dia — tem proposta (Prezi)?'},
+    {id:'c2',text:'Sem proposta → falar com Dani'},
+    {id:'c3',text:'Com proposta → preencher dados nos cards do Pipe',hasNote:true,notePlaceholder:'Empresas com proposta, apresentação Prezi e preenchimentos necessários...'},
+  ]},
+  {id:'pos_bl',icon:'🔔',color:'var(--pink)',title:'Pós-Reunião',tasks:[
+    {id:'po1',text:'Enviar link para assinatura'},
+    {id:'po2',text:'Monitorar fase da assinatura'},
+    {id:'po3',text:'Criar grupo WhatsApp (Dani + Marco)'},
+    {id:'po4',text:'Foto personalizada no grupo (nome do município)'},
+    {id:'po5',text:'Mensagem de apresentação no grupo'},
+  ]},
+  {id:'fo_bl',icon:'🔁',color:'var(--teal)',title:'Follow-Up (Tarde)',tasks:[
+    {id:'f1',text:'Follow-up — Modelo Atual'},
+    {id:'f2',text:'Follow-up — Franquia'},
+    {id:'f3',text:'Follow-up — Oxy Hacker'},
+    {id:'f4',text:'Follow-up das mensagens enviadas pela IA'},
+  ]},
+  {id:'enc_bl',icon:'📝',color:'var(--green)',title:'Encerramento',tasks:[
+    {id:'e1',text:'Confirmar reuniões do dia seguinte'},
+    {id:'e2',text:'Ligar a IA antes de sair'},
+  ]},
+];
+
+function todayKey(){return new Date().toISOString().slice(0,10);}
+
+function renderRotina(){
+  const today=todayKey();
+  if(!RTSTATE[today])RTSTATE[today]={tasks:{},notes:{}};
+  const st=RTSTATE[today];
+  const allT=ROTINA.flatMap(s=>s.tasks);
+  const done=allT.filter(t=>st.tasks[t.id]).length;
+  const pct=allT.length>0?Math.round(done/allT.length*100):0;
+  document.getElementById('rot-stats').innerHTML=`
+    <div class="stat"><div class="stat-lbl">Total tarefas</div><div class="stat-val">${allT.length}</div></div>
+    <div class="stat"><div class="stat-lbl">Concluídas</div><div class="stat-val" style="color:var(--green)">${done}</div></div>
+    <div class="stat"><div class="stat-lbl">Pendentes</div><div class="stat-val" style="color:var(--amber)">${allT.length-done}</div></div>
+    <div class="stat"><div class="stat-lbl">Progresso</div><div class="stat-val" style="color:var(--green)">${pct}%</div><div class="stat-bar"><div class="stat-fill" style="width:${pct}%"></div></div></div>
+  `;
+  let html='';
+  ROTINA.forEach(sec=>{
+    const sd=sec.tasks.filter(t=>st.tasks[t.id]).length;
+    html+=`<div class="csec">
+      <div class="csec-head" style="border-left:3px solid ${sec.color}">
+        <span style="font-size:14px">${sec.icon}</span>
+        <span class="csec-title">${sec.title}</span>
+        <span class="csec-cnt">${sd}/${sec.tasks.length}</span>
+      </div>`;
+    if(sec.memo){
+      html+=`<div style="padding:7px 14px;background:rgba(255,255,255,.015);border-bottom:0.5px solid var(--border)"><span style="font-size:10px;color:var(--muted);font-style:italic">💡 ${sec.memo}</span></div>`;
+    }
+    sec.tasks.forEach(t=>{
+      const done=!!st.tasks[t.id];
+      html+=`<div class="citem" onclick="toggleTask('${today}','${t.id}')">
+        <div class="cbox${done?' done':''}"></div>
+        <span class="clabel${done?' done':''}">${t.text}</span>
+      </div>`;
+      if(t.hasNote){
+        const noteVal=st.notes[t.id]||'';
+        html+=`<div style="padding:2px 14px 8px 38px"><textarea class="note-field" placeholder="${t.notePlaceholder||'Observações...'}" onchange="saveTaskNote('${today}','${t.id}',this.value)">${noteVal}</textarea></div>`;
+      }
+    });
+    html+=`</div>`;
+  });
+  document.getElementById('check-grid').innerHTML=html;
+}
+
+function toggleTask(day,tid){
+  if(!RTSTATE[day])RTSTATE[day]={tasks:{},notes:{}};
+  RTSTATE[day].tasks[tid]=!RTSTATE[day].tasks[tid];
+  ss('o2_rt',RTSTATE);
+  snapshotHist(day);
+  scheduleBackup();
+  renderRotina();
+}
+function saveTaskNote(day,tid,val){
+  if(!RTSTATE[day])RTSTATE[day]={tasks:{},notes:{}};
+  if(!RTSTATE[day].notes)RTSTATE[day].notes={};
+  RTSTATE[day].notes[tid]=val;
+  ss('o2_rt',RTSTATE);
+  snapshotHist(day);
+  scheduleBackup();
+}
+
+function snapshotHist(day){
+  HISTORY[day]={
+    date:day,
+    rotina:JSON.parse(JSON.stringify(RTSTATE[day]||{})),
+    counts:{
+      expansao:DB.expansao.filter(r=>r.data===day).length,
+      modeloatual:DB.modeloatual.filter(r=>r.data===day).length,
+      ia:DB.ia.filter(r=>r.data===day).length,
+      follows:DB.follows.filter(r=>r.data===day).length,
+      lixo:DB.lixo.filter(r=>r.dataReg===day).length,
+    }
+  };
+  ss('o2_hist',HISTORY);
+}
+
+// ============================================================
+// NOTES
+// ============================================================
+function toggleNoteForm(){
+  const w=document.getElementById('note-add-wrap');
+  w.style.display=w.style.display==='none'?'block':'none';
+  if(w.style.display==='block'){
+    const t=todayKey();
+    document.getElementById('nt-data').value=t;
+  }
+}
+function saveNote(){
+  const txt=document.getElementById('nt-txt').value.trim();
+  if(!txt)return;
+  const note={id:Date.now(),txt,prio:document.getElementById('nt-prio').value,data:document.getElementById('nt-data').value,hora:document.getElementById('nt-hora').value,created:new Date().toISOString()};
+  NOTES.unshift(note);
+  ss('o2_notes',NOTES);
+  document.getElementById('nt-txt').value='';
+  toggleNoteForm();
+  scheduleBackup();
+  renderNotes();
+}
+function delNote(id){
+  if(!confirm('Remover nota?'))return;
+  NOTES=NOTES.filter(n=>n.id!==id);
+  ss('o2_notes',NOTES);
+  scheduleBackup();
+  renderNotes();
+}
+const PRIO_LABEL={'p-alta':'🔴 Alta','p-media':'🟡 Média','p-baixa':'🟢 Baixa'};
+function renderNotes(){
+  const body=document.getElementById('notes-body');
+  if(!NOTES.length){body.innerHTML='<div class="empty">Nenhuma nota. Clique em "Nova nota".</div>';return;}
+  const sorted=[...NOTES].sort((a,b)=>{const o={'p-alta':0,'p-media':1,'p-baixa':2};return(o[a.prio]||1)-(o[b.prio]||1);});
+  body.innerHTML=sorted.map(n=>{
+    let deadline='';
+    if(n.data){
+      const deadlineStr=fmtDate(n.data)+(n.hora?' às '+n.hora.slice(0,5):'');
+      const isPast=n.data<todayKey();
+      deadline=`<span class="note-deadline" style="${isPast?'color:var(--red)':''}">📅 ${deadlineStr}${isPast?' — VENCIDA':''}</span>`;
+    }
+    return `<div class="note-card ${n.prio}">
+      <button class="note-del" onclick="delNote(${n.id})">✕</button>
+      <div class="note-meta"><span class="note-prio">${PRIO_LABEL[n.prio]||n.prio}</span>${deadline}</div>
+      <div class="note-txt">${n.txt.replace(/\n/g,'<br>')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+function renderHistory(){
+  const days=Object.keys(HISTORY).sort((a,b)=>b.localeCompare(a));
+  const list=document.getElementById('hist-list');
+  if(!days.length){list.innerHTML='<div class="empty">Nenhum registro ainda</div>';return;}
+  const allT=ROTINA.flatMap(s=>s.tasks);
+  list.innerHTML=days.map(d=>{
+    const snap=HISTORY[d];
+    const done=allT.filter(t=>snap.rotina&&snap.rotina.tasks&&snap.rotina.tasks[t.id]).length;
+    const label=new Date(d+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
+    return `<div class="hday" onclick="showHistDay('${d}',this)"><span class="hdate">${label}</span><span class="hcnt">${done}/${allT.length}</span></div>`;
+  }).join('');
+}
+function showHistDay(day,el){
+  document.querySelectorAll('.hday').forEach(h=>h.classList.remove('sel'));
+  el.classList.add('sel');
+  const snap=HISTORY[day];
+  if(!snap){document.getElementById('hist-content').innerHTML='<div class="empty">Sem dados</div>';return;}
+  const allT=ROTINA.flatMap(s=>s.tasks);
+  const done=allT.filter(t=>snap.rotina&&snap.rotina.tasks&&snap.rotina.tasks[t.id]).length;
+  const label=new Date(day+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  const c=snap.counts||{};
+  let html=`<div class="stats-row">
+    <div class="stat"><div class="stat-lbl">Tarefas</div><div class="stat-val" style="color:var(--green)">${done}/${allT.length}</div></div>
+    <div class="stat"><div class="stat-lbl">Expansão</div><div class="stat-val" style="color:var(--teal)">${c.expansao||0}</div></div>
+    <div class="stat"><div class="stat-lbl">Modelo Atual</div><div class="stat-val" style="color:var(--green)">${c.modeloatual||0}</div></div>
+    <div class="stat"><div class="stat-lbl">IA Chatwoot</div><div class="stat-val" style="color:var(--amber)">${c.ia||0}</div></div>
+    <div class="stat"><div class="stat-lbl">Follows</div><div class="stat-val" style="color:var(--pink)">${c.follows||0}</div></div>
+    <div class="stat"><div class="stat-lbl">MQL Lixo</div><div class="stat-val" style="color:var(--red)">${c.lixo||0}</div></div>
+  </div>
+  <div class="tcard"><div class="thead"><div class="ttitle">${label}</div></div>`;
+  ROTINA.forEach(sec=>{
+    html+=`<div style="padding:7px 14px 3px;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;border-bottom:0.5px solid var(--border);background:rgba(255,255,255,.01)">${sec.icon} ${sec.title}</div>`;
+    sec.tasks.forEach(t=>{
+      const ok=snap.rotina&&snap.rotina.tasks&&snap.rotina.tasks[t.id];
+      const note=snap.rotina&&snap.rotina.notes&&snap.rotina.notes[t.id];
+      html+=`<div style="display:flex;flex-direction:column;padding:7px 14px 7px 14px;border-bottom:0.5px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:13px;height:13px;border-radius:3px;background:${ok?'var(--green)':'var(--surface3)'};border:1px solid ${ok?'var(--green)':'var(--border2)'};display:flex;align-items:center;justify-content:center;flex-shrink:0">${ok?'<span style="color:#0a0a0a;font-size:8px;font-weight:800">✓</span>':''}</div>
+          <span style="font-size:11px;color:${ok?'var(--muted)':'var(--muted2)'};${ok?'text-decoration:line-through':''}">${t.text}</span>
+        </div>
+        ${note?`<div style="margin-top:4px;margin-left:21px;font-size:10px;color:var(--amber);font-style:italic;background:var(--amber-dim);padding:3px 8px;border-radius:4px">${note}</div>`:''}
+      </div>`;
+    });
+  });
+  html+=`</div>`;
+  document.getElementById('hist-content').innerHTML=html;
+}
+
+// ============================================================
+// MONTH TABS
+// ============================================================
+function getMonths(key){
+  const df=key==='lixo'?'dataReg':'data';
+  return[...new Set(DB[key].map(r=>r[df]?r[df].slice(0,7):'').filter(Boolean))].sort((a,b)=>b.localeCompare(a));
+}
+function renderMtabs(key){
+  const months=getMonths(key);
+  const cid={expansao:'exp-mtabs',modeloatual:'ma-mtabs',ia:'ia-mtabs',follows:'fo-mtabs',lixo:'lx-mtabs'}[key];
+  if(!CUR_MONTH[key]&&months.length)CUR_MONTH[key]=months[0];
+  let h=`<button class="mtab${!CUR_MONTH[key]?' active':''}" onclick="setMonth('${key}','')">Todos</button>`;
+  months.forEach(m=>{
+    const [y,mo]=m.split('-');
+    const lbl=new Date(y,parseInt(mo)-1,1).toLocaleString('pt-BR',{month:'long',year:'numeric'});
+    h+=`<button class="mtab${CUR_MONTH[key]===m?' active':''}" onclick="setMonth('${key}','${m}')">${lbl}</button>`;
+  });
+  document.getElementById(cid).innerHTML=h;
+}
+function setMonth(key,m){
+  CUR_MONTH[key]=m;renderMtabs(key);renderTable(key);renderStats(key);
+}
+function filteredRows(key){
+  const df=key==='lixo'?'dataReg':'data';
+  if(!CUR_MONTH[key])return DB[key];
+  return DB[key].filter(r=>r[df]&&r[df].startsWith(CUR_MONTH[key]));
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function renderStats(key){
+  const rows=filteredRows(key);
+  const total=DB[key].length;
+  const statId={expansao:'exp-stats',modeloatual:'ma-stats',ia:'ia-stats',follows:'fo-stats',lixo:'lx-stats'}[key];
+  let h='';
+  if(key==='expansao'){
+    h=`<div class="stat"><div class="stat-lbl">Reuniões (filtro)</div><div class="stat-val" style="color:var(--teal)">${rows.length}</div></div>
+       <div class="stat"><div class="stat-lbl">Total geral</div><div class="stat-val">${total}</div></div>
+       <div class="stat"><div class="stat-lbl">Expansão</div><div class="stat-val" style="color:var(--teal)">${rows.filter(r=>r.modelo==='Expansão').length}</div></div>
+       <div class="stat"><div class="stat-lbl">Oxy Hacker</div><div class="stat-val" style="color:var(--amber)">${rows.filter(r=>r.modelo==='Oxy Hacker').length}</div></div>`;
+  } else if(key==='modeloatual'){
+    h=`<div class="stat"><div class="stat-lbl">Reuniões (filtro)</div><div class="stat-val" style="color:var(--green)">${rows.length}</div></div>
+       <div class="stat"><div class="stat-lbl">Total geral</div><div class="stat-val">${total}</div></div>
+       <div class="stat"><div class="stat-lbl">Atual</div><div class="stat-val" style="color:var(--green)">${rows.filter(r=>r.modelo==='Atual').length}</div></div>
+       <div class="stat"><div class="stat-lbl">Franquia</div><div class="stat-val" style="color:var(--blue)">${rows.filter(r=>r.modelo==='Franquia').length}</div></div>`;
+  } else if(key==='ia'){
+    const sdrs=[...new Set(rows.map(r=>r.sdr).filter(Boolean))];
+    h=`<div class="stat"><div class="stat-lbl">Reuniões via IA</div><div class="stat-val" style="color:var(--amber)">${rows.length}</div></div>
+       <div class="stat"><div class="stat-lbl">Total geral</div><div class="stat-val">${total}</div></div>
+       ${sdrs.slice(0,2).map(s=>`<div class="stat"><div class="stat-lbl">SDR — ${s}</div><div class="stat-val">${rows.filter(r=>r.sdr===s).length}</div></div>`).join('')}`;
+  } else if(key==='follows'){
+    h=`<div class="stat"><div class="stat-lbl">Follows (filtro)</div><div class="stat-val" style="color:var(--pink)">${rows.length}</div></div>
+       <div class="stat"><div class="stat-lbl">Total geral</div><div class="stat-val">${total}</div></div>
+       <div class="stat"><div class="stat-lbl">Responderam</div><div class="stat-val" style="color:var(--green)">${rows.filter(r=>r.status==='Respondeu').length}</div></div>
+       <div class="stat"><div class="stat-lbl">Qualificados</div><div class="stat-val" style="color:var(--blue)">${rows.filter(r=>r.status==='Qualificado').length}</div></div>`;
+  } else if(key==='lixo'){
+    h=`<div class="stat"><div class="stat-lbl">MQL Lixo (filtro)</div><div class="stat-val" style="color:var(--red)">${rows.length}</div></div>
+       <div class="stat"><div class="stat-lbl">Total geral</div><div class="stat-val">${total}</div></div>
+       <div class="stat"><div class="stat-lbl">Nº inválido</div><div class="stat-val">${rows.filter(r=>r.motivo==='Número inválido').length}</div></div>
+       <div class="stat"><div class="stat-lbl">Não é MQL</div><div class="stat-val">${rows.filter(r=>r.motivo==='Não é MQL').length}</div></div>`;
+  }
+  document.getElementById(statId).innerHTML=h;
+}
+
+// ============================================================
+// TABLE RENDER
+// ============================================================
+const SC={'Respondeu':'bg','Qualificado':'bb','Aguardando resposta':'ba','Sem contato':'br','Descartado':'br','Número inválido':'br','Não é MQL':'ba','Sem origem':'br','Duplicado':'ba','Outro':'ba','Expansão':'bt','Oxy Hacker':'ba','Parceria Estratégica':'bb','Atual':'bg','Franquia':'bb'};
+function bdg(v){if(!v)return'<span style="color:var(--muted)">—</span>';return`<span class="badge ${SC[v]||'bg'}">${v}</span>`;}
+function fmtDate(d){if(!d)return'—';try{return new Date(d+'T12:00:00').toLocaleDateString('pt-BR');}catch(e){return d;}}
+function fmtTime(t){if(!t)return'—';return t.slice(0,5);}
+function mkLink(url){if(!url)return'—';const id=url.split('/').pop();return`<a href="${url}" target="_blank">🔗 #${id}</a>`;}
+
+function renderTable(key){
+  const rows=filteredRows(key);
+  const tb=document.getElementById('tb-'+key);
+  if(!rows.length){tb.innerHTML=`<tr><td colspan="20"><div class="empty">Nenhum registro. Clique em "+ Adicionar".</div></td></tr>`;return;}
+  let h='';
+  rows.forEach((r,i)=>{
+    const ri=DB[key].indexOf(r);
+    if(key==='expansao'){
+      h+=`<tr><td>${i+1}</td><td style="color:var(--text);font-weight:500">${r.nome||'—'}</td><td>${r.email||'—'}</td><td>${fmtDate(r.data)}</td><td>${fmtTime(r.hora)}</td><td>${r.estado||'—'}</td><td>${bdg(r.modelo)}</td><td>${mkLink(r.card)}</td><td>${r.obs||'—'}</td><td><button class="del-btn" onclick="delRow('expansao',${ri})">✕</button></td></tr>`;
+    } else if(key==='modeloatual'){
+      h+=`<tr><td>${i+1}</td><td style="color:var(--text);font-weight:500">${r.nome||'—'}</td><td>${r.email||'—'}</td><td>${fmtDate(r.data)}</td><td>${fmtTime(r.hora)}</td><td>${r.estado||'—'}</td><td>${bdg(r.modelo)}</td><td>${mkLink(r.card)}</td><td>${r.obs||'—'}</td><td style="color:var(--amber);font-size:11px">${r.obs2||'—'}</td><td><button class="del-btn" onclick="delRow('modeloatual',${ri})">✕</button></td></tr>`;
+    } else if(key==='ia'){
+      h+=`<tr><td>${i+1}</td><td style="color:var(--text);font-weight:500">${r.nome||'—'}</td><td>${r.empresa||'—'}</td><td>${r.email||'—'}</td><td>${fmtDate(r.data)}</td><td>${fmtTime(r.hora)}</td><td>${bdg(r.sdr)}</td><td>${mkLink(r.card)}</td><td>${r.obs||'—'}</td><td><button class="del-btn" onclick="delRow('ia',${ri})">✕</button></td></tr>`;
+    } else if(key==='follows'){
+      h+=`<tr><td>${i+1}</td><td style="color:var(--text);font-weight:500">${r.titulo||'—'}</td><td>${r.nome||'—'}</td><td style="font-family:monospace;font-size:11px">${r.tel||'—'}</td><td>${fmtDate(r.data)}</td><td>${bdg(r.status)}</td><td>${r.obs||'—'}</td><td><button class="del-btn" onclick="delRow('follows',${ri})">✕</button></td></tr>`;
+    } else if(key==='lixo'){
+      h+=`<tr><td>${i+1}</td><td>${mkLink(r.card)}</td><td style="font-family:monospace;font-size:11px">${r.camp||'—'}</td><td>${fmtDate(r.dataReg)}</td><td>${bdg(r.motivo)}</td><td>${r.obs||'—'}</td><td><button class="del-btn" onclick="delRow('lixo',${ri})">✕</button></td></tr>`;
+    }
+  });
+  tb.innerHTML=h;
+}
+
+// ============================================================
+// ADD / SAVE / DELETE
+// ============================================================
+function showForm(key){document.getElementById('form-'+key).style.display='flex';const t=todayKey();const df={expansao:'e-data',modeloatual:'m-data',ia:'i-data',follows:'f-data',lixo:'l-data'}[key];const el=document.getElementById(df);if(el&&!el.value)el.value=t;}
+function hideForm(key){document.getElementById('form-'+key).style.display='none';}
+function gv(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function clr(ids){ids.forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
+
+function saveRow(key){
+  let row={};
+  const maps={
+    expansao:()=>({nome:gv('e-nome'),email:gv('e-email'),data:gv('e-data'),hora:gv('e-hora'),estado:gv('e-estado'),modelo:gv('e-modelo'),card:gv('e-card'),obs:gv('e-obs')}),
+    modeloatual:()=>({nome:gv('m-nome'),email:gv('m-email'),data:gv('m-data'),hora:gv('m-hora'),estado:gv('m-estado'),modelo:gv('m-modelo'),card:gv('m-card'),obs:gv('m-obs'),obs2:gv('m-obs2')}),
+    ia:()=>({nome:gv('i-nome'),empresa:gv('i-empresa'),email:gv('i-email'),data:gv('i-data'),hora:gv('i-hora'),sdr:gv('i-sdr'),card:gv('i-card'),obs:gv('i-obs')}),
+    follows:()=>({titulo:gv('f-titulo'),nome:gv('f-nome'),tel:gv('f-tel'),data:gv('f-data'),status:gv('f-status'),obs:gv('f-obs')}),
+    lixo:()=>({card:gv('l-card'),camp:gv('l-camp'),dataReg:gv('l-data'),motivo:gv('l-motivo'),obs:gv('l-obs')}),
+  };
+  row=maps[key]();
+  DB[key].push(row);
+  saveDB(key);
+  hideForm(key);
+  snapshotHist(todayKey());
+  renderMtabs(key);renderTable(key);renderStats(key);
+  scheduleBackup();
+}
+
+function delRow(key,idx){
+  if(!confirm('Remover este registro?'))return;
+  DB[key].splice(idx,1);saveDB(key);renderMtabs(key);renderTable(key);renderStats(key);
+  scheduleBackup();
+}
+
+// ============================================================
+// GOOGLE SHEETS SYNC
+// ============================================================
+let GCFG = ls('o2_gcfg', {url:'', interval:15});
+let syncTimer = null;
+
+function openCfg(){
+  document.getElementById('cfg-overlay').style.display='flex';
+  document.getElementById('cfg-url').value = GCFG.url||'';
+  document.getElementById('cfg-interval').value = GCFG.interval||15;
+  const last = ls('o2_last_sync','');
+  document.getElementById('cfg-last-sync').textContent = last ? new Date(last).toLocaleString('pt-BR') : 'nunca';
+}
+function closeCfg(){ document.getElementById('cfg-overlay').style.display='none'; }
+
+function saveCfg(){
+  GCFG.url = document.getElementById('cfg-url').value.trim();
+  GCFG.interval = parseInt(document.getElementById('cfg-interval').value);
+  ss('o2_gcfg', GCFG);
+  setupSyncTimer();
+  syncNow();
+}
+
+function setupSyncTimer(){
+  if(syncTimer) clearInterval(syncTimer);
+  if(!GCFG.url) return;
+  syncTimer = setInterval(syncNow, GCFG.interval * 60000);
+}
+
+async function syncNow(){
+  if(!GCFG.url){ const s=document.getElementById('cfg-status'); if(s)s.textContent='⚠ Cole a URL primeiro.'; return; }
+  const statusEl = document.getElementById('cfg-status');
+  if(statusEl) statusEl.textContent = '↺ Sincronizando...';
+  try {
+    // Usa o Apps Script Web App URL com JSONP via iframe trick ou fetch direto
+    // O Apps Script com doGet() retorna JSON com CORS permitido para qualquer pessoa
+    const url = GCFG.url + (GCFG.url.includes('?')?'&':'?') + 'callback=__o2cb&t='+Date.now();
+
+    const data = await new Promise((resolve, reject)=>{
+      const timeout = setTimeout(()=>{ delete window.__o2cb; reject(new Error('Timeout — verifique se a implantação está como "Qualquer pessoa"')); }, 10000);
+      window.__o2cb = function(d){ clearTimeout(timeout); delete window.__o2cb; resolve(d); };
+      const s = document.createElement('script');
+      s.src = url;
+      s.onerror = ()=>{ clearTimeout(timeout); delete window.__o2cb; reject(new Error('Erro ao carregar script')); };
+      document.head.appendChild(s);
+      setTimeout(()=>document.head.removeChild(s), 500);
+    });
+
+    const rows = Array.isArray(data) ? data : [];
+
+    // Guarda card/obs/obs2 existentes no dash (preenchidos manualmente)
+    const manualData = {};
+    ['expansao','modeloatual','ia'].forEach(k=>{
+      DB[k].forEach(r=>{ if(r.id_evento) manualData[r.id_evento]={card:r.card||'',obs:r.obs||'',obs2:r.obs2||''}; });
+    });
+
+    // Limpa apenas entradas vindas da agenda
+    ['expansao','modeloatual','ia'].forEach(k=>{
+      DB[k] = DB[k].filter(r=>r.origem !== 'google_agenda');
+    });
+
+    // Processa cada linha do JSON
+    rows.forEach(row=>{
+      if(!row.id_evento) return;
+      const get = col => (row[col]||'').toString().trim();
+      const modelo = get('modelo');
+      const key = {expansao:'expansao', modeloatual:'modeloatual', ia:'ia'}[modelo];
+      if(!key) return;
+
+      const id = get('id_evento');
+      const manual = manualData[id] || {card:'',obs:'',obs2:''};
+
+      const reuniao = {
+        id_evento: id,
+        nome:      get('nome'),
+        email:     get('email'),
+        data:      get('data'),
+        hora:      get('hora'),
+        estado:    get('estado'),
+        modelo:    modelo==='ia'?'Modelo Atual':(modelo==='modeloatual'?'Atual':'Expansão'),
+        card:      manual.card,
+        obs:       manual.obs,
+        obs2:      manual.obs2,
+        sdr:       get('sdr'),
+        empresa:   get('empresa'),
+        origem:    'google_agenda',
+      };
+      DB[key].push(reuniao);
+    });
+
+    ['expansao','modeloatual','ia'].forEach(k=>{ ss('o2_'+{expansao:'exp',modeloatual:'ma',ia:'ia'}[k], DB[k]); });
+
+    const now = new Date().toISOString();
+    ss('o2_last_sync', now);
+    if(statusEl) statusEl.innerHTML = '<span style="color:var(--green)">✓ Sincronizado em ' + new Date(now).toLocaleTimeString('pt-BR') + '</span>';
+    const cfgLast = document.getElementById('cfg-last-sync');
+    if(cfgLast) cfgLast.textContent = new Date(now).toLocaleString('pt-BR');
+
+    const activeView = document.querySelector('.view.active');
+    if(activeView){
+      const vid = activeView.id.replace('view-','');
+      if(['expansao','modeloatual','ia'].includes(vid)){ renderMtabs(vid);renderTable(vid);renderStats(vid); }
+      if(vid==='reunioes') renderReunioes();
+    }
+    checkNotifications();
+  } catch(e){
+    if(statusEl) statusEl.innerHTML = '<span style="color:var(--red)">✕ Erro: ' + e.message + '</span>';
+  }
+}
+
+function parseCSV(text){
+  const rows=[];
+  const lines=text.split('\n');
+  lines.forEach(line=>{
+    if(!line.trim()) return;
+    const row=[];let cur='';let inQ=false;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='"'){inQ=!inQ;}
+      else if(c===','&&!inQ){row.push(cur);cur='';}
+      else cur+=c;
+    }
+    row.push(cur);
+    rows.push(row);
+  });
+  return rows;
+}
+
+// Init sync if URL already saved
+if(GCFG.url) setupSyncTimer();
+
+// ============================================================
+// INIT
+// ============================================================
+renderRotina();
+</script>
+</body>
+</html>
